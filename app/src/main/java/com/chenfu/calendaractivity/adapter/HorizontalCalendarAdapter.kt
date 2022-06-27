@@ -60,14 +60,15 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
     override fun onBindViewHolder(holder: HorizontalCalendarViewHolder, position: Int) {
         val view = holder.itemContainer
         setVerticalTouchEvent(view)
-        val monthAdapter = object : TimeAdapter(context, monthList[position]) {
+        val lastPosition = holder.adapterPosition
+        val monthAdapter = object : TimeAdapter(context, monthList[lastPosition]) {
             override fun bindView(itemView: View, itemPosition: Int) {
-                bindView(itemView, position, itemPosition)
+                bindView(itemView, lastPosition, itemPosition)
             }
         }
-        val weekAdapter = object : TimeAdapter(context, weekList[position]) {
+        val weekAdapter = object : TimeAdapter(context, weekList[lastPosition]) {
             override fun bindView(itemView: View, itemPosition: Int) {
-                bindView(itemView, position, itemPosition)
+                bindView(itemView, lastPosition, itemPosition)
             }
         }
         holder.monthGridView.adapter = monthAdapter
