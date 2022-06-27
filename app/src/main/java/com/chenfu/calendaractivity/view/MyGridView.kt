@@ -1,4 +1,4 @@
-package com.chenfu.calendaractivity
+package com.chenfu.calendaractivity.view
 
 import android.content.Context
 import android.util.AttributeSet

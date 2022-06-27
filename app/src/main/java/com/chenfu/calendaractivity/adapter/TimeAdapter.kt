@@ -1,10 +1,12 @@
-package com.chenfu.calendaractivity
+package com.chenfu.calendaractivity.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import com.chenfu.calendaractivity.R
+import com.chenfu.calendaractivity.util.CalendarUtil
 
 abstract class TimeAdapter(val context:Context, private var list: List<CalendarUtil.DateInfo>) : BaseAdapter() {
     

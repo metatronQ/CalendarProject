@@ -1,4 +1,4 @@
-package com.chenfu.calendaractivity;
+package com.chenfu.calendaractivity.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

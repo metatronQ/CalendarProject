@@ -1,4 +1,4 @@
-package com.chenfu.calendaractivity
+package com.chenfu.calendaractivity.test
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,7 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.chenfu.calendaractivity.HorizontalVpAdapter.*
+import com.chenfu.calendaractivity.R
+import com.chenfu.calendaractivity.test.HorizontalVpAdapter.*
 import java.util.*
 
 class HorizontalVpAdapter(private val context: Context) : RecyclerView.Adapter<HorizontalVpViewHolder>() {

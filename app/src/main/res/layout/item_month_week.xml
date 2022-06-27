@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.chenfu.calendaractivity.CalendarChangeFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.chenfu.calendaractivity.view.CalendarChangeFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/calendar_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/purple_200">
 
-    <com.chenfu.calendaractivity.MyGridView
+    <com.chenfu.calendaractivity.view.MyGridView
         android:id="@+id/month_grid"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:background="@color/purple_700"
         android:numColumns="7" />
 
-    <com.chenfu.calendaractivity.MyGridView
+    <com.chenfu.calendaractivity.view.MyGridView
         android:id="@+id/week_grid"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:numColumns="7"
         tools:background="@color/black"
         tools:visibility="gone" />
-</com.chenfu.calendaractivity.CalendarChangeFrameLayout>
+</com.chenfu.calendaractivity.view.CalendarChangeFrameLayout>

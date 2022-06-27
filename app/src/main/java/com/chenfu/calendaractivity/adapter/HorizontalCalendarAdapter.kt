@@ -1,16 +1,18 @@
-package com.chenfu.calendaractivity
+package com.chenfu.calendaractivity.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.chenfu.calendaractivity.MainActivity
+import com.chenfu.calendaractivity.R
+import com.chenfu.calendaractivity.util.CalendarUtil
+import com.chenfu.calendaractivity.view.CalendarChangeFrameLayout
 import java.util.*
 
 class HorizontalCalendarAdapter(private val context: Context, val callback: MainActivity.Callback) :
@@ -69,9 +71,7 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
             }
         }
         holder.monthGridView.adapter = monthAdapter
-//        setTouchListenerForGrid(holder.monthGridView)
         holder.weekGridView.adapter = weekAdapter
-//        setTouchListenerForGrid(holder.weekGridView)
         holder.weekGridView.visibility = View.GONE
     }
 
@@ -95,51 +95,6 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
             selectedDay = calendar.get(Calendar.DAY_OF_MONTH)
             updateSelect(monthList[position][itemPosition])
         }
-//        var startY = 0
-//        var currentY = 0
-//        var isSlide = false
-//        itemView.setOnTouchListener { _, event ->
-//            when (event?.action) {
-//                MotionEvent.ACTION_DOWN -> {
-//                    startY = event.y.toInt()
-//                    currentY = startY
-//                    isSlide = false
-//                    Log.d(TAG, "TouchListener: Down $startY")
-//                    return@setOnTouchListener (itemView.parent.parent as CalendarChangeFrameLayout).onTouchEvent(event)
-//                }
-//                MotionEvent.ACTION_MOVE -> {
-//                    if (isSlide) return@setOnTouchListener true
-//                    currentY = event.y.toInt()
-//                    Log.d(TAG, "TouchListener: Move $currentY")
-//                    if ((startY - currentY) > 100) {
-//                        isMonth = false
-//                        isSlide = true
-//                        return@setOnTouchListener (itemView.parent.parent as CalendarChangeFrameLayout).onTouchEvent(
-//                            event
-//                        )
-//                    } else if ((currentY - startY) > 100) {
-//                        isMonth = true
-//                        isSlide = true
-//                        return@setOnTouchListener (itemView.parent.parent as CalendarChangeFrameLayout).onTouchEvent(
-//                            event
-//                        )
-//                    }
-//                }
-//                MotionEvent.ACTION_UP -> {
-//                    if (!isSlide) {
-//                        itemView.performClick()
-//                    }
-//                    Log.d(TAG, "TouchListener: Up $currentY")
-//                    startY = 0
-//                    currentY = 0
-//                    isSlide = false
-//                }
-//                MotionEvent.ACTION_CANCEL -> {
-//                    Log.d(TAG, "TouchListener: Cancel")
-//                }
-//            }
-//            true
-//        }
     }
 
     override fun getItemCount(): Int {
@@ -154,52 +109,6 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
     fun setVerticalTouchEvent(view: CalendarChangeFrameLayout) {
         view.setOnTouchListener { _, event ->
             view.onTouchEvent(event)
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    fun setTouchListenerForGrid(gridView: GridView) {
-        var startY = 0
-        var currentY = 0
-        var isSlide = false
-        gridView.setOnTouchListener { _, event ->
-            when (event?.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    startY = event.y.toInt()
-                    currentY = startY
-                    isSlide = false
-                    Log.d(TAG, "TouchListener: Down $startY")
-                    (gridView.parent as CalendarChangeFrameLayout).onTouchEvent(event)
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    if (isSlide) return@setOnTouchListener true
-                    currentY = event.y.toInt()
-                    Log.d(TAG, "TouchListener: Move $currentY")
-                    if ((startY - currentY) > 100) {
-                        isMonth = false
-                        isSlide = true
-                        return@setOnTouchListener (gridView.parent as CalendarChangeFrameLayout).onTouchEvent(
-                            event
-                        )
-                    } else if ((currentY - startY) > 100) {
-                        isMonth = true
-                        isSlide = true
-                        return@setOnTouchListener (gridView.parent as CalendarChangeFrameLayout).onTouchEvent(
-                            event
-                        )
-                    }
-                }
-                MotionEvent.ACTION_UP -> {
-                    Log.d(TAG, "TouchListener: Up $currentY")
-                    startY = 0
-                    currentY = 0
-                    isSlide = false
-                }
-                MotionEvent.ACTION_CANCEL -> {
-                    Log.d(TAG, "TouchListener: Cancel")
-                }
-            }
-            false
         }
     }
 
