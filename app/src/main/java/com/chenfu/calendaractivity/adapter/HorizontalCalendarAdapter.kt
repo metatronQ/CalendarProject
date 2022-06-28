@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.chenfu.calendaractivity.GlobalField
 import com.chenfu.calendaractivity.MainActivity
 import com.chenfu.calendaractivity.R
 import com.chenfu.calendaractivity.util.CalendarUtil
@@ -40,10 +41,6 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
             itemView.findViewById(R.id.calendar_container)
     }
 
-    private var isMonth = true
-
-    fun isMonth() = isMonth
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -52,14 +49,22 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
         // 需要在bind之前加载三月和三周的数据，绑定时只需要根据位置绑定即可
         initMonthDatas()
         initWeekDatas()
-        return HorizontalCalendarViewHolder(
+        val holder = HorizontalCalendarViewHolder(
             LayoutInflater.from(context).inflate(R.layout.item_month_week, parent, false)
         )
+        // 初始时隐藏
+        holder.weekGridView.visibility = View.GONE
+        // 初始时设置callback
+        holder.itemContainer.setCallback(object : Callback2Visibility {
+            override fun updateVisibility() {
+                notifyDataSetChanged()
+            }
+        })
+        return holder
     }
 
     override fun onBindViewHolder(holder: HorizontalCalendarViewHolder, position: Int) {
-        val view = holder.itemContainer
-        setVerticalTouchEvent(view)
+        setVerticalTouchEvent(holder.itemContainer)
         val lastPosition = holder.adapterPosition
         val monthAdapter = object : TimeAdapter(context, monthList[lastPosition]) {
             override fun bindView(itemView: View, itemPosition: Int) {
@@ -73,11 +78,41 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
         }
         holder.monthGridView.adapter = monthAdapter
         holder.weekGridView.adapter = weekAdapter
-        holder.weekGridView.visibility = View.GONE
+        if (GlobalField.isMonth) {
+            holder.monthGridView.visibility = View.VISIBLE
+            holder.weekGridView.visibility = View.GONE
+        } else {
+            holder.monthGridView.visibility = View.GONE
+            holder.weekGridView.visibility = View.VISIBLE
+        }
+        holder.itemContainer.setWeekRowPosition(calculateRow())
+    }
+
+    fun calculateRow(): Int {
+        var positionInList = 0
+        val curMonth = monthList[1]
+        val calendar = Calendar.getInstance()
+        for (i in 0..curMonth.size) {
+            calendar.time = curMonth[i].date
+            // selectedDay肯定是当月的，若点击上下月会将当月更新的
+            // 视图内可能含有相同的day，则需要判断不同月
+            val month = calendar.get(Calendar.MONTH) + 1
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            if (day == selectedDay && month == selectedMonth) {
+                positionInList = i
+                break
+            }
+        }
+        // 0-6 是第一行
+        return positionInList / 7 + 1
     }
 
     fun bindView(itemView: View, position: Int, itemPosition: Int) {
-        val date = monthList[position][itemPosition].date
+        val date = if (GlobalField.isMonth) {
+            monthList[position][itemPosition].date
+        } else {
+            weekList[position][itemPosition].date
+        }
         val tvDay: TextView = itemView.findViewById(R.id.tvDay)
         val calendar = Calendar.getInstance()
         calendar.time = date
@@ -94,7 +129,7 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
             selectedYear = calendar.get(Calendar.YEAR)
             selectedMonth = calendar.get(Calendar.MONTH) + 1
             selectedDay = calendar.get(Calendar.DAY_OF_MONTH)
-            updateSelect(monthList[position][itemPosition])
+            updateSelect()
         }
     }
 
@@ -113,15 +148,16 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
         }
     }
 
-    fun updateSelect(dateInfo: CalendarUtil.DateInfo) {
+    fun updateSelect() {
         initMonthDatas()
         initWeekDatas()
         callback.setTvYearAndMonth(selectedYear, selectedMonth)
+        // 可能会点击到上下月而进行三月切换，若要优化则需要判断点击是否在当前月
         notifyDataSetChanged()
     }
 
     fun updateNext() {
-        if (isMonth) {
+        if (GlobalField.isMonth) {
             selectedDay = 1
             if (selectedMonth == 12) {
                 selectedMonth = 1
@@ -145,7 +181,7 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
     }
 
     fun updatePre() {
-        if (isMonth) {
+        if (GlobalField.isMonth) {
             selectedDay = 1
             if (selectedMonth == 1) {
                 selectedMonth = 12
@@ -222,5 +258,9 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
         weekList.add(mCalendarUtil.initWeekData(preCalendar.time))
         weekList.add(mCalendarUtil.initWeekData(calendar.time))
         weekList.add(mCalendarUtil.initWeekData(afterCalendar.time))
+    }
+
+    interface Callback2Visibility {
+        fun updateVisibility()
     }
 }

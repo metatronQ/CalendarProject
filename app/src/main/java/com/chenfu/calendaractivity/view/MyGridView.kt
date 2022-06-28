@@ -34,7 +34,6 @@ class MyGridView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, def
                 startX = ev.x.toInt()
                 currentY = startY
                 currentX = startX
-
                 parent.requestDisallowInterceptTouchEvent(true)
                 Log.d(TAG, "TouchListener: Down $currentY")
             }
