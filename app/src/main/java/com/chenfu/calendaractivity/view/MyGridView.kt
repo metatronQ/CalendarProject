@@ -19,6 +19,16 @@ class MyGridView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, def
 
     val TAG = "MyGridView"
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        // TODO: 设置gridview高度自适应item总高
+        var heightSpec = heightMeasureSpec
+        if (layoutParams.height == LayoutParams.WRAP_CONTENT) {
+            // makeMeasureSpec方法组合测量值和测量模式，AT_MOST规定包容item，size指定最大值，组合起来即测量时最大限度的包容item高度
+            heightSpec = MeasureSpec.makeMeasureSpec(Int.MAX_VALUE shr 2, MeasureSpec.AT_MOST)
+        }
+        super.onMeasure(widthMeasureSpec, heightSpec)
+    }
+
     var startY = 0
     var startX = 0
     var currentY = 0
