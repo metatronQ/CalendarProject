@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.GridView
+import com.chenfu.calendaractivity.util.DisplayUtils
 
 class MyGridView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
     GridView(context, attrs, defStyleAttr, defStyleRes) {
@@ -19,14 +20,25 @@ class MyGridView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, def
 
     val TAG = "MyGridView"
 
+    private var dayCount = 35
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        // TODO: 设置gridview高度自适应item总高
         var heightSpec = heightMeasureSpec
-        if (layoutParams.height == LayoutParams.WRAP_CONTENT) {
-            // makeMeasureSpec方法组合测量值和测量模式，AT_MOST规定包容item，size指定最大值，组合起来即测量时最大限度的包容item高度
-            heightSpec = MeasureSpec.makeMeasureSpec(Int.MAX_VALUE shr 2, MeasureSpec.AT_MOST)
-        }
+//        if (layoutParams.height == LayoutParams.WRAP_CONTENT) {
+//            // TODO: 设置gridview高度自适应item总高
+//            // makeMeasureSpec方法组合测量值和测量模式，AT_MOST规定包容item，size指定最大值，组合起来即测量时最大限度的包容item高度
+//            heightSpec = MeasureSpec.makeMeasureSpec(Int.MAX_VALUE shr 2, MeasureSpec.AT_MOST)
+//        }
+//        if (MeasureSpec.getMode(heightSpec) == MeasureSpec.EXACTLY) {
+//            val dip50 = DisplayUtils.dip2px(context, 50f).toFloat()
+//            heightSpec =
+//                MeasureSpec.makeMeasureSpec((dayCount / 7 * dip50).toInt(), MeasureSpec.EXACTLY)
+//        }
         super.onMeasure(widthMeasureSpec, heightSpec)
+    }
+
+    fun setDayCount(dayAMonth: Int) {
+        this.dayCount = dayAMonth
     }
 
     var startY = 0

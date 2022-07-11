@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.GridView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +14,9 @@ import com.chenfu.calendaractivity.GlobalField
 import com.chenfu.calendaractivity.MainActivity
 import com.chenfu.calendaractivity.R
 import com.chenfu.calendaractivity.util.CalendarUtil
+import com.chenfu.calendaractivity.util.DisplayUtils
 import com.chenfu.calendaractivity.view.CalendarChangeFrameLayout
+import com.chenfu.calendaractivity.view.MyGridView
 import java.util.*
 
 class HorizontalCalendarAdapter(private val context: Context, val callback: MainActivity.Callback) :
@@ -35,8 +38,8 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
     private val mCalendarUtil = CalendarUtil()
 
     class HorizontalCalendarViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val monthGridView: GridView = itemView.findViewById(R.id.month_grid)
-        val weekGridView: GridView = itemView.findViewById(R.id.week_grid)
+        val monthGridView: MyGridView = itemView.findViewById(R.id.month_grid)
+        val weekGridView: MyGridView = itemView.findViewById(R.id.week_grid)
         val itemContainer: CalendarChangeFrameLayout =
             itemView.findViewById(R.id.calendar_container)
     }
@@ -66,8 +69,18 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
     override fun onBindViewHolder(holder: HorizontalCalendarViewHolder, position: Int) {
         setVerticalTouchEvent(holder.itemContainer)
         val lastPosition = holder.adapterPosition
+        val raw = monthList[lastPosition].size / 7
+        val height = DisplayUtils.dip2px(context, 300f) / raw
         val monthAdapter = object : TimeAdapter(context, monthList[lastPosition]) {
             override fun bindView(itemView: View, itemPosition: Int) {
+                val layout: FrameLayout = itemView.findViewById(R.id.item_container)
+//                layout.measure(
+//                    layout.measuredWidth,
+//                    View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+//                )
+                val params = layout.layoutParams
+                params.height = height
+                layout.layoutParams = params
                 bindView(itemView, lastPosition, itemPosition)
             }
         }
@@ -77,7 +90,9 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
             }
         }
         holder.monthGridView.adapter = monthAdapter
+//        holder.monthGridView.setDayCount(monthList[lastPosition].size)
         holder.weekGridView.adapter = weekAdapter
+//        holder.weekGridView.setDayCount(7)
         if (GlobalField.isMonth) {
             holder.monthGridView.visibility = View.VISIBLE
             holder.weekGridView.visibility = View.GONE
@@ -85,7 +100,8 @@ class HorizontalCalendarAdapter(private val context: Context, val callback: Main
             holder.monthGridView.visibility = View.GONE
             holder.weekGridView.visibility = View.VISIBLE
         }
-        holder.itemContainer.setWeekRowPosition(calculateRow())
+        // TODO: ????
+        holder.itemContainer.setWeekRowPosition(calculateRow(), height.toFloat())
     }
 
     fun calculateRow(): Int {

@@ -11,7 +11,6 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.GridView
 import android.widget.RelativeLayout
-import android.widget.Toast
 import com.chenfu.calendaractivity.GlobalField
 import com.chenfu.calendaractivity.R
 import com.chenfu.calendaractivity.adapter.HorizontalCalendarAdapter
@@ -42,8 +41,10 @@ class CalendarChangeFrameLayout(
     var isAnimationEnd = true
     var weekRaw = 1
     val dip50 = DisplayUtils.dip2px(context, 50f).toFloat()
+    val dip300 = dip50 * 6
+    var itemHeight = dip50
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         val action = ev!!.action
         if (action == MotionEvent.ACTION_DOWN) {
             startY = ev.y.toInt()
@@ -103,7 +104,7 @@ class CalendarChangeFrameLayout(
 
     fun startAnimationForWeek(monthGridView: GridView, weekGridView: GridView) {
         val animator: ValueAnimator = ValueAnimator.ofFloat(0f, -6 * dip50)
-        animator.duration = 1000
+        animator.duration = 5000
         animator.interpolator = LinearInterpolator()
         animator.addUpdateListener {
             val displayTiming = -(weekRaw - 1) * dip50
@@ -113,15 +114,20 @@ class CalendarChangeFrameLayout(
             if (isAbsoluteLess10(translationY, displayTiming)) {
                 weekGridView.visibility = View.VISIBLE
             }
+
+            if (dip300 + translationY >= itemHeight) {
+                val lp = monthGridView.layoutParams
+                lp.height = (dip300 + translationY).toInt()
+                monthGridView.layoutParams = lp
+            }
         }
         animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator?) {
-                // TODO：gridview重新显示的时候会重新设置item adapter，因此需要先设置true
-                GlobalField.isMonth = false
                 monthGridView.visibility = View.VISIBLE
             }
 
             override fun onAnimationEnd(animation: Animator?) {
+                GlobalField.isMonth = false
                 monthGridView.visibility = View.GONE
                 callback.updateVisibility()
             }
@@ -139,7 +145,7 @@ class CalendarChangeFrameLayout(
 
     fun startAnimationForMonth(monthGridView: GridView, weekGridView: GridView) {
         val animator: ValueAnimator = ValueAnimator.ofFloat(-6 * dip50, 0f)
-        animator.duration = 1000
+        animator.duration = 5000
         animator.interpolator = LinearInterpolator()
         animator.addUpdateListener {
             val displayTiming = -(weekRaw - 1) * dip50
@@ -149,10 +155,16 @@ class CalendarChangeFrameLayout(
             if (isAbsoluteLess10(translationY, displayTiming)) {
                 weekGridView.visibility = View.GONE
             }
+
+            if (dip300 + translationY >= itemHeight) {
+                val lp = monthGridView.layoutParams
+                lp.height = (dip300 + translationY).toInt()
+                monthGridView.layoutParams = lp
+            }
         }
         animator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator?) {
-                // TODO：可能gridview重新显示的时候会重新设置item adapter，因此需要先设置true
+                // TODO：可能gridview重新显示的时候会重新bind item adapter，因此需要先设置true
                 GlobalField.isMonth = true
                 monthGridView.visibility = View.VISIBLE
             }
@@ -182,8 +194,9 @@ class CalendarChangeFrameLayout(
         return false
     }
 
-    fun setWeekRowPosition(raw: Int) {
+    fun setWeekRowPosition(raw: Int, height: Float) {
         this.weekRaw = raw
+        this.itemHeight = height
     }
 
     fun setCallback(callback2Visibility: HorizontalCalendarAdapter.Callback2Visibility) {

@@ -4,19 +4,20 @@
     android:id="@+id/calendar_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
     tools:background="@color/purple_200">
 
     <com.chenfu.calendaractivity.view.MyGridView
         android:id="@+id/month_grid"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:background="@color/purple_700"
         android:numColumns="7" />
 
     <com.chenfu.calendaractivity.view.MyGridView
         android:id="@+id/week_grid"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:numColumns="7"
         android:background="@color/purple_700"
         tools:background="@color/black"
