@@ -7,7 +7,7 @@ import android.view.MotionEvent
 import android.widget.RelativeLayout
 import android.widget.ScrollView
 import androidx.viewpager2.widget.ViewPager2
-import com.chenfu.calendaractivity.adapter.HorizontalCalendarAdapter
+import com.chenfu.calendaractivity.adapter.MonthCalendarAdapter
 
 /**
  * TODO:若要满足scrollview下滑至顶再下滑展开至月视图，在顶上滑先收缩至周视图，则需要先要在此类拦截全部的除down事件，即内部拦截法，然后在找到对应的gridview进行动画更新和点击事件处理
@@ -40,9 +40,6 @@ class MyScrollView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, d
      */
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         Log.d(TAG, "onTouchEvent: $ev")
-        val containerRelative: RelativeLayout = getChildAt(0) as RelativeLayout
-        val viewPager2: ViewPager2 = containerRelative.getChildAt(1) as ViewPager2
-        val adapter: HorizontalCalendarAdapter = viewPager2.adapter as HorizontalCalendarAdapter
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
                 startY = ev.y.toInt()

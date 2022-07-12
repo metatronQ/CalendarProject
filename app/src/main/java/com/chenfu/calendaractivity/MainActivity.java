@@ -5,10 +5,12 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.RelativeLayout;
+import android.view.View;
 import android.widget.TextView;
 
-import com.chenfu.calendaractivity.adapter.HorizontalCalendarAdapter;
+import com.chenfu.calendaractivity.adapter.BaseAdapter;
+import com.chenfu.calendaractivity.adapter.MonthCalendarAdapter;
+import com.chenfu.calendaractivity.adapter.WeekCalendarAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,16 +26,55 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tvYear = findViewById(R.id.tv_year);
         TextView tvMonth = findViewById(R.id.tv_month);
-        ViewPager2 viewPager2 = findViewById(R.id.viewpager2);
-        HorizontalCalendarAdapter adapter = new HorizontalCalendarAdapter(this, new Callback() {
+        ViewPager2 monthViewPager2 = findViewById(R.id.month_view_pager);
+        ViewPager2 weekViewPager2 = findViewById(R.id.week_view_pager);
+        Callback callback = (year, month) -> {
+            tvYear.setText("" + year);
+            tvMonth.setText("" + month);
+        };
+        MonthCalendarAdapter adapterMonth = new MonthCalendarAdapter(this, callback);
+        adapterMonth.setCallback2UpdateListener(new Callback2Update() {
             @Override
-            public void setTvYearAndMonth(int year, int month) {
-                tvYear.setText("" + year);
-                tvMonth.setText("" + month);
+            public void start2Week() {
+                Global.INSTANCE.startAnimationForWeek(monthViewPager2, weekViewPager2);
+            }
+
+            @Override
+            public void start2Month() {
+                // do nothing
+            }
+
+            @Override
+            public void update() {
+                // do nothing
             }
         });
+        bindAdapter(monthViewPager2, adapterMonth);
+//        monthViewPager2.setVisibility(View.GONE);
+        WeekCalendarAdapter adapterWeek = new WeekCalendarAdapter(this, callback);
+        adapterWeek.setCallback2UpdateListener(new Callback2Update() {
+            @Override
+            public void start2Week() {
+                // do nothing
+            }
+
+            @Override
+            public void start2Month() {
+                Global.INSTANCE.startAnimationForMonth(monthViewPager2, weekViewPager2);
+            }
+
+            @Override
+            public void update() {
+                // do nothing
+            }
+        });
+        bindAdapter(weekViewPager2, adapterWeek);
+        weekViewPager2.setVisibility(View.GONE);
+    }
+
+    public void bindAdapter(ViewPager2 viewPager2, BaseAdapter adapter) {
         viewPager2.setAdapter(adapter);
-        viewPager2.setCurrentItem(1);
+        viewPager2.setCurrentItem(1, false);
         viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             /**
              * 这里可以判断左移或右移的趋势

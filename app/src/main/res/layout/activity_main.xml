@@ -10,6 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/month_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_container"
+            android:orientation="horizontal"
+            android:background="@drawable/viewpager_border"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1000dp"
+            android:layout_below="@id/month_view_pager"
+            android:background="@color/teal_700"
+            android:gravity="center"
+            android:text="占位"
+            android:textSize="100sp" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/week_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_container"
+            android:orientation="horizontal"
+            android:background="@drawable/viewpager_border"/>
+
         <LinearLayout
             android:id="@+id/tv_container"
             android:layout_width="match_parent"
@@ -36,22 +61,5 @@
                 android:textColor="@color/white"
                 tools:text="月" />
         </LinearLayout>
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewpager2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_container"
-            android:orientation="horizontal"
-            android:background="@drawable/viewpager_border"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1000dp"
-            android:layout_below="@id/viewpager2"
-            android:background="@color/teal_700"
-            android:gravity="center"
-            android:text="占位"
-            android:textSize="100sp" />
     </RelativeLayout>
 </com.chenfu.calendaractivity.view.MyScrollView>

@@ -192,6 +192,23 @@ public class CalendarUtil {
         return dateList;
     }
 
+    public int getAllRaws(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+        List<DateInfo> list = initMonthData(calendar.getTime());
+        return list.size() / 7;
+    }
+
+    public int getRaw(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, 1);
+        int startDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int lastMonthDays = startDayOfWeek - 1;
+        int toNowDays = lastMonthDays + day;
+        // toNowdays - 1: 0 - 6 -> 第一行
+        return (toNowDays - 1) / 7 + 1;
+    }
+
     public static class DateInfo {
         public static final int PRE_MONTH = 1;
         public static final int CURRENT_MONTH = PRE_MONTH + 1;

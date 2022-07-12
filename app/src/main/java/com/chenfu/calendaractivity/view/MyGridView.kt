@@ -22,8 +22,8 @@ class MyGridView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, def
 
     private var dayCount = 35
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        var heightSpec = heightMeasureSpec
+//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+//        var heightSpec = heightMeasureSpec
 //        if (layoutParams.height == LayoutParams.WRAP_CONTENT) {
 //            // TODO: 设置gridview高度自适应item总高
 //            // makeMeasureSpec方法组合测量值和测量模式，AT_MOST规定包容item，size指定最大值，组合起来即测量时最大限度的包容item高度
@@ -34,8 +34,8 @@ class MyGridView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, def
 //            heightSpec =
 //                MeasureSpec.makeMeasureSpec((dayCount / 7 * dip50).toInt(), MeasureSpec.EXACTLY)
 //        }
-        super.onMeasure(widthMeasureSpec, heightSpec)
-    }
+//        super.onMeasure(widthMeasureSpec, heightSpec)
+//    }
 
     fun setDayCount(dayAMonth: Int) {
         this.dayCount = dayAMonth
