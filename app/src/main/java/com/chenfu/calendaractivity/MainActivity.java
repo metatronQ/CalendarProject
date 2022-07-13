@@ -1,31 +1,49 @@
 package com.chenfu.calendaractivity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.chenfu.calendaractivity.adapter.BaseAdapter;
 import com.chenfu.calendaractivity.adapter.MonthCalendarAdapter;
 import com.chenfu.calendaractivity.adapter.WeekCalendarAdapter;
+import com.chenfu.calendaractivity.view.MyScrollView;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = "MainActivity";
-    int curPosition = 1;
     boolean isNext = false;
     boolean isPageChange = false;
+
+    public void initToday(TextView tvYear, TextView tvMonth) {
+        Global.INSTANCE.setSelectedYear(Calendar.getInstance().get(Calendar.YEAR));
+        Global.INSTANCE.setSelectedMonth(Calendar.getInstance().get(Calendar.MONTH) + 1);
+        Global.INSTANCE.setSelectedDay(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        tvYear.setText("" + Global.INSTANCE.getSelectedYear());
+        tvMonth.setText("" + Global.INSTANCE.getSelectedMonth());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        LinearLayout placeHolderLl = findViewById(R.id.placeholder_container);
+        TextView clickPlaceHolderTv = findViewById(R.id.click_placeholder_tv);
+        clickPlaceHolderTv.setOnClickListener(v -> Toast.makeText(this, "content的点击事件", Toast.LENGTH_SHORT).show());
+        MyScrollView scrollView = findViewById(R.id.my_scroll_view);
         TextView tvYear = findViewById(R.id.tv_year);
         TextView tvMonth = findViewById(R.id.tv_month);
+        // 由于initToday只在初始化今天时使用，因此移至此处init
+        initToday(tvYear, tvMonth);
         ViewPager2 monthViewPager2 = findViewById(R.id.month_view_pager);
         ViewPager2 weekViewPager2 = findViewById(R.id.week_view_pager);
         Callback callback = (year, month) -> {
@@ -33,43 +51,31 @@ public class MainActivity extends AppCompatActivity {
             tvMonth.setText("" + month);
         };
         MonthCalendarAdapter adapterMonth = new MonthCalendarAdapter(this, callback);
-        adapterMonth.setCallback2UpdateListener(new Callback2Update() {
-            @Override
-            public void start2Week() {
-                Global.INSTANCE.startAnimationForWeek(monthViewPager2, weekViewPager2);
-            }
-
-            @Override
-            public void start2Month() {
-                // do nothing
-            }
-
-            @Override
-            public void update() {
-                // do nothing
-            }
-        });
         bindAdapter(monthViewPager2, adapterMonth);
-//        monthViewPager2.setVisibility(View.GONE);
         WeekCalendarAdapter adapterWeek = new WeekCalendarAdapter(this, callback);
-        adapterWeek.setCallback2UpdateListener(new Callback2Update() {
-            @Override
-            public void start2Week() {
-                // do nothing
-            }
-
-            @Override
-            public void start2Month() {
-                Global.INSTANCE.startAnimationForMonth(monthViewPager2, weekViewPager2);
-            }
-
-            @Override
-            public void update() {
-                // do nothing
-            }
-        });
         bindAdapter(weekViewPager2, adapterWeek);
         weekViewPager2.setVisibility(View.GONE);
+
+        scrollView.setCallback(new Callback2Update() {
+            @Override
+            public void start2Week() {
+                if (Global.INSTANCE.isMonth()) {
+                    Global.INSTANCE.startAnimationForWeek(monthViewPager2, weekViewPager2, placeHolderLl);
+                }
+            }
+
+            @Override
+            public void start2Month() {
+                if (!Global.INSTANCE.isMonth()) {
+                    Global.INSTANCE.startAnimationForMonth(monthViewPager2, weekViewPager2, placeHolderLl);
+                }
+            }
+
+            @Override
+            public void update() {
+
+            }
+        });
     }
 
     public void bindAdapter(ViewPager2 viewPager2, BaseAdapter adapter) {

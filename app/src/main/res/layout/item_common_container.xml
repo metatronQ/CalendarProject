@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.chenfu.calendaractivity.view.CalendarChangeFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/calendar_container"
     android:layout_width="match_parent"
@@ -10,7 +10,8 @@
         android:id="@+id/common_grid"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="@color/purple_700"
-        android:numColumns="7" />
+        android:background="@color/purple_200"
+        android:numColumns="7"
+        tools:background="#00FFFFFF" />
 
-</com.chenfu.calendaractivity.view.CalendarChangeFrameLayout>
+</FrameLayout>

@@ -5,8 +5,10 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.GridView
-import com.chenfu.calendaractivity.util.DisplayUtils
 
+/**
+ * requestDisallowInterceptTouchEvent拦截点击事件
+ */
 class MyGridView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
     GridView(context, attrs, defStyleAttr, defStyleRes) {
     constructor(context: Context) : this(context, null)
@@ -47,7 +49,7 @@ class MyGridView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, def
     var currentX = 0
 
     /**
-     * 内部拦截法，配合CalendarChangeFrameLayout
+     * 内部拦截法，配合ScrollView
      */
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         when (ev?.action) {

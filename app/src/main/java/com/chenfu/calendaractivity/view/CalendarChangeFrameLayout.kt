@@ -1,17 +1,11 @@
 package com.chenfu.calendaractivity.view
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
-import android.view.animation.LinearInterpolator
 import android.widget.RelativeLayout
 import com.chenfu.calendaractivity.Callback2Update
-import com.chenfu.calendaractivity.util.DisplayUtils
 
 class CalendarChangeFrameLayout(
     context: Context,

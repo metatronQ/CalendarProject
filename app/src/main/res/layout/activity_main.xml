@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.chenfu.calendaractivity.view.MyScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -10,22 +10,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <LinearLayout
+            android:id="@+id/placeholder_container"
+            android:layout_width="match_parent"
+            android:layout_height="1000dp"
+            android:layout_below="@id/month_view_pager">
+
+            <TextView
+                android:id="@+id/click_placeholder_tv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/placeholder_bg"
+                android:gravity="center"
+                android:text="点击占位"
+                android:textSize="100sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/purple_700"
+                android:gravity="center"
+                android:text="空占位"
+                android:textColor="@color/white"
+                android:textSize="100sp" />
+        </LinearLayout>
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/month_view_pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_container"
             android:orientation="horizontal"
-            android:background="@drawable/viewpager_border"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="1000dp"
-            android:layout_below="@id/month_view_pager"
-            android:background="@color/teal_700"
-            android:gravity="center"
-            android:text="占位"
-            android:textSize="100sp" />
+            tools:background="@drawable/viewpager_border" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/week_view_pager"
@@ -33,12 +51,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_container"
             android:orientation="horizontal"
-            android:background="@drawable/viewpager_border"/>
+            tools:background="@drawable/viewpager_border" />
 
         <LinearLayout
             android:id="@+id/tv_container"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:layout_alignParentTop="true"
             android:orientation="horizontal">
 
             <TextView

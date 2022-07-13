@@ -4,17 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.chenfu.calendaractivity.Callback2Update
 import com.chenfu.calendaractivity.MainActivity
 import com.chenfu.calendaractivity.R
-import com.chenfu.calendaractivity.view.CalendarChangeFrameLayout
 import com.chenfu.calendaractivity.view.MyGridView
 
 abstract class BaseAdapter(protected val context: Context, val callback: MainActivity.Callback) :
     RecyclerView.Adapter<BaseAdapter.HorizontalCalendarViewHolder>() {
-
-    protected var callback2Update: Callback2Update? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -23,7 +20,6 @@ abstract class BaseAdapter(protected val context: Context, val callback: MainAct
         val holder = HorizontalCalendarViewHolder(
             LayoutInflater.from(context).inflate(R.layout.item_common_container, parent, false)
         )
-        holder.itemContainer.setCallback(callback2Update)
         return holder
     }
 
@@ -39,13 +35,9 @@ abstract class BaseAdapter(protected val context: Context, val callback: MainAct
 
     abstract fun updateNext()
 
-    fun setCallback2UpdateListener(callback: Callback2Update) {
-        callback2Update = callback
-    }
-
     class HorizontalCalendarViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val gridView: MyGridView = itemView.findViewById(R.id.common_grid)
-        val itemContainer: CalendarChangeFrameLayout =
+        val itemContainer: FrameLayout =
             itemView.findViewById(R.id.calendar_container)
     }
 }

@@ -1,14 +1,10 @@
 package com.chenfu.calendaractivity.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.TextView
-import com.chenfu.calendaractivity.Global.itemHeight
-import com.chenfu.calendaractivity.Global.raw
 import com.chenfu.calendaractivity.Global.selectedDay
 import com.chenfu.calendaractivity.Global.selectedMonth
 import com.chenfu.calendaractivity.Global.selectedYear
@@ -16,12 +12,12 @@ import com.chenfu.calendaractivity.MainActivity
 import com.chenfu.calendaractivity.R
 import com.chenfu.calendaractivity.util.CalendarUtil
 import com.chenfu.calendaractivity.util.DisplayUtils
-import com.chenfu.calendaractivity.view.CalendarChangeFrameLayout
 import java.util.*
 
-class MonthCalendarAdapter(context: Context, callback: MainActivity.Callback) : BaseAdapter(context, callback){
+class MonthCalendarAdapter(context: Context, callback: MainActivity.Callback) :
+    BaseAdapter(context, callback) {
 
-    private val TAG = "HorizontalCalendar"
+    private val TAG = "MonthCalendarAdapter"
     private var mYear = 0
 
     // 1-12
@@ -35,15 +31,14 @@ class MonthCalendarAdapter(context: Context, callback: MainActivity.Callback) : 
         parent: ViewGroup,
         viewType: Int
     ): HorizontalCalendarViewHolder {
-        initToday()
         // 需要在bind之前加载三月的数据，绑定时只需要根据位置绑定即可
         initMonthDatas()
         return super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: HorizontalCalendarViewHolder, position: Int) {
-        setVerticalTouchEvent(holder.itemContainer)
         val lastPosition = holder.adapterPosition
+        // month由于上下月的行数可能不同，因此固定所有pager的高度为6行的高度，对每个pager的item单独设置为对应月所对应的item高度
         val raws = monthList[lastPosition].size / 7
         val height = DisplayUtils.dip2px(context, 300f) / raws
         val monthAdapter = object : TimeAdapter(context, monthList[lastPosition]) {
@@ -77,7 +72,6 @@ class MonthCalendarAdapter(context: Context, callback: MainActivity.Callback) : 
         val params = itemView.layoutParams
         params.height = height
         itemView.layoutParams = params
-        itemHeight = height
 
         val date = monthList[position][itemPosition].date
         val tvDay: TextView = itemView.findViewById(R.id.tvDay)
@@ -91,7 +85,7 @@ class MonthCalendarAdapter(context: Context, callback: MainActivity.Callback) : 
             )
         ) {
             itemView.setBackgroundColor(Color.RED)
-            raw = CalendarUtil().getRaw(selectedYear, selectedMonth - 1, selectedDay)
+//            raw = CalendarUtil().getRaw(selectedYear, selectedMonth - 1, selectedDay)
         }
         itemView.setOnClickListener {
             selectedYear = calendar.get(Calendar.YEAR)
@@ -103,13 +97,6 @@ class MonthCalendarAdapter(context: Context, callback: MainActivity.Callback) : 
 
     fun isSelectedDay(year: Int, month: Int, day: Int): Boolean {
         return selectedYear == year && selectedMonth == month && selectedDay == day
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private fun setVerticalTouchEvent(view: CalendarChangeFrameLayout) {
-        view.setOnTouchListener { _, event ->
-            view.onTouchEvent(event)
-        }
     }
 
     fun updateSelect() {
@@ -145,18 +132,6 @@ class MonthCalendarAdapter(context: Context, callback: MainActivity.Callback) : 
         callback.setTvYearAndMonth(selectedYear, selectedMonth)
         initMonthDatas()
         notifyDataSetChanged()
-    }
-
-    fun initToday() {
-        mYear = Calendar.getInstance().get(Calendar.YEAR)
-        mMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
-        mDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-
-        selectedYear = mYear
-        selectedMonth = mMonth
-        selectedDay = mDay
-
-        callback.setTvYearAndMonth(selectedYear, selectedMonth)
     }
 
     fun initMonthDatas() {

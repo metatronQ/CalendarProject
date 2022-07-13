@@ -1,16 +1,11 @@
 package com.chenfu.calendaractivity.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.text.format.DateUtils
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.TextView
-import com.chenfu.calendaractivity.Global.itemHeight
 import com.chenfu.calendaractivity.Global.selectedDay
 import com.chenfu.calendaractivity.Global.selectedMonth
 import com.chenfu.calendaractivity.Global.selectedYear
@@ -18,12 +13,12 @@ import com.chenfu.calendaractivity.MainActivity
 import com.chenfu.calendaractivity.R
 import com.chenfu.calendaractivity.util.CalendarUtil
 import com.chenfu.calendaractivity.util.DisplayUtils
-import com.chenfu.calendaractivity.view.CalendarChangeFrameLayout
 import java.util.*
 
-class WeekCalendarAdapter(context: Context, callback: MainActivity.Callback) : BaseAdapter(context, callback){
+class WeekCalendarAdapter(context: Context, callback: MainActivity.Callback) :
+    BaseAdapter(context, callback) {
 
-    private val TAG = "HorizontalCalendar"
+    private val TAG = "WeekCalendarAdapter"
     private var mYear = 0
 
     // 1-12
@@ -37,21 +32,19 @@ class WeekCalendarAdapter(context: Context, callback: MainActivity.Callback) : B
         parent: ViewGroup,
         viewType: Int
     ): HorizontalCalendarViewHolder {
-        initToday()
         // 需要在bind之前加载三周的数据，绑定时只需要根据位置绑定即可
         initWeekDatas()
         return super.onCreateViewHolder(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: HorizontalCalendarViewHolder, position: Int) {
-        setVerticalTouchEvent(holder.itemContainer)
         val lastPosition = holder.adapterPosition
+        // week先对每一个pager的高度都设定为当前选中的日期所对应的高度，避免切换时有空隙，切换后会根据计算后的选中日期重新设置所有item即每个pager的高度
         val raws = CalendarUtil().getAllRaws(selectedYear, selectedMonth - 1, selectedDay)
         val height = DisplayUtils.dip2px(context, 300f) / raws
         val lp = holder.gridView.layoutParams
         lp.height = height
         holder.gridView.layoutParams = lp
-        itemHeight = height
         val weekAdapter = object : TimeAdapter(context, weekList[lastPosition]) {
             override fun bindView(itemView: View, itemPosition: Int) {
                 bindView(itemView, lastPosition, itemPosition, height)
@@ -91,13 +84,6 @@ class WeekCalendarAdapter(context: Context, callback: MainActivity.Callback) : B
         return selectedYear == year && selectedMonth == month && selectedDay == day
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    fun setVerticalTouchEvent(view: CalendarChangeFrameLayout) {
-        view.setOnTouchListener { _, event ->
-            view.onTouchEvent(event)
-        }
-    }
-
     fun updateSelect() {
         initWeekDatas()
         callback.setTvYearAndMonth(selectedYear, selectedMonth)
@@ -127,18 +113,6 @@ class WeekCalendarAdapter(context: Context, callback: MainActivity.Callback) : B
         callback.setTvYearAndMonth(selectedYear, selectedMonth)
         initWeekDatas()
         notifyDataSetChanged()
-    }
-
-    fun initToday() {
-        mYear = Calendar.getInstance().get(Calendar.YEAR)
-        mMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
-        mDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-
-        selectedYear = mYear
-        selectedMonth = mMonth
-        selectedDay = mDay
-
-        callback.setTvYearAndMonth(selectedYear, selectedMonth)
     }
 
     fun initWeekDatas() {
