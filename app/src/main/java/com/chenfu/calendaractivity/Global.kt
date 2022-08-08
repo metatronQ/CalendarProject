@@ -48,7 +48,12 @@ object Global {
 
         val monthHeight = itemHeight * rawCount * 1f
         val displayTiming = -(raw - 1) * itemHeight * 1f
-        animator = ValueAnimator.ofFloat(0f, displayTiming, itemHeight - monthHeight, -monthHeight)
+        animator = ValueAnimator.ofFloat(
+            0f,
+            displayTiming, displayTiming,
+            itemHeight - monthHeight, itemHeight - monthHeight,
+            -monthHeight
+        )
         animator?.run {
             duration = 500
             interpolator = LinearInterpolator()
@@ -120,7 +125,12 @@ object Global {
 
         val monthHeight = itemHeight * rawCount * 1f
         val displayTiming = -(raw - 1) * itemHeight * 1f
-        animator = ValueAnimator.ofFloat(-monthHeight, itemHeight - monthHeight, displayTiming, 0f)
+        animator = ValueAnimator.ofFloat(
+            -monthHeight,
+            itemHeight - monthHeight, itemHeight - monthHeight,
+            displayTiming, displayTiming,
+            0f
+        )
         animator?.run {
             duration = 500
             interpolator = LinearInterpolator()
