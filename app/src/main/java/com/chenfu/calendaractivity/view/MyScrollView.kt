@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.widget.ScrollView
 import com.chenfu.calendaractivity.Callback2Update
-import com.chenfu.calendaractivity.Global
+import com.chenfu.calendaractivity.GlobalInstance
 
 /**
  * 分发处理整个日历事件的关键
@@ -53,7 +53,7 @@ class MyScrollView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, d
      *      2。拦截了后续任一事件child都将无法消费
      */
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        if (Global.isAnimatorStarted) {
+        if (GlobalInstance.isAnimatorStarted) {
             // 若动画正在进行，则需要把down事件也拦截掉
             return true
         }
@@ -102,17 +102,17 @@ class MyScrollView(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, d
             }
             MotionEvent.ACTION_MOVE -> {
                 currentY = event.y.toInt()
-                if (Global.isAnimatorStarted) {
+                if (GlobalInstance.isAnimatorStarted) {
                     return true
                 }
-                if (scrollY == 0 && Global.isMonth) {
+                if (scrollY == 0 && GlobalInstance.isMonth) {
                     if (startY - currentY > 100) {
                         callback?.start2Week()
                     }
                     // 返回true表示消费和拦截
                     return true
                 }
-                if (scrollY == 0 && !Global.isMonth) {
+                if (scrollY == 0 && !GlobalInstance.isMonth) {
                     // 只有处于0并且往月滑，scroll才不能滑动，其余情况交给scroll
                     if (currentY - startY > 100) {
                         callback?.start2Month()

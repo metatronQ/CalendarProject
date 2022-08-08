@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +14,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.chenfu.calendaractivity.adapter.BaseAdapter;
 import com.chenfu.calendaractivity.adapter.MonthCalendarAdapter;
 import com.chenfu.calendaractivity.adapter.WeekCalendarAdapter;
+import com.chenfu.calendaractivity.util.CalendarUtil;
+import com.chenfu.calendaractivity.util.DisplayUtils;
 import com.chenfu.calendaractivity.view.MyScrollView;
 
 import java.util.Calendar;
@@ -23,12 +26,22 @@ public class MainActivity extends AppCompatActivity {
     boolean isNext = false;
     boolean isPageChange = false;
 
+    boolean isWeekChanged = false;
+    boolean isPlaceHolderChange = false;
+
+    int rawCount = 6;
+    int raw = 0;
+    int itemHeight = 0;
+
+    float monthHeight = 0;
+    float displayTiming = 0;
+
     public void initToday(TextView tvYear, TextView tvMonth) {
-        Global.INSTANCE.setSelectedYear(Calendar.getInstance().get(Calendar.YEAR));
-        Global.INSTANCE.setSelectedMonth(Calendar.getInstance().get(Calendar.MONTH) + 1);
-        Global.INSTANCE.setSelectedDay(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-        tvYear.setText("" + Global.INSTANCE.getSelectedYear());
-        tvMonth.setText("" + Global.INSTANCE.getSelectedMonth());
+        GlobalInstance.INSTANCE.setSelectedYear(Calendar.getInstance().get(Calendar.YEAR));
+        GlobalInstance.INSTANCE.setSelectedMonth(Calendar.getInstance().get(Calendar.MONTH) + 1);
+        GlobalInstance.INSTANCE.setSelectedDay(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        tvYear.setText("" + GlobalInstance.INSTANCE.getSelectedYear());
+        tvMonth.setText("" + GlobalInstance.INSTANCE.getSelectedMonth());
     }
 
     @Override
@@ -55,19 +68,87 @@ public class MainActivity extends AppCompatActivity {
         WeekCalendarAdapter adapterWeek = new WeekCalendarAdapter(this, callback);
         bindAdapter(weekViewPager2, adapterWeek);
         weekViewPager2.setVisibility(View.GONE);
+        GlobalInstance.INSTANCE.setListener(new GlobalInstance.UpdateListener() {
 
+            @Override
+            public void updateMonth2Week(float translationY) {
+                monthViewPager2.setTranslationY(translationY);
+                if (!isPlaceHolderChange) {
+                    placeHolderLl.setTranslationY(translationY);
+                }
+                if (GlobalInstance.INSTANCE.isAbsoluteLess(translationY, displayTiming, 10) && !isWeekChanged) {
+                    weekViewPager2.setVisibility(View.VISIBLE);
+                    isWeekChanged = true;
+                }
+                if (GlobalInstance.INSTANCE.isAbsoluteLess(monthHeight + translationY, itemHeight * 1f, 10) && !isPlaceHolderChange) {
+                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) placeHolderLl.getLayoutParams();
+                    lp.removeRule(RelativeLayout.BELOW);
+                    lp.addRule(RelativeLayout.BELOW, weekViewPager2.getId());
+                    placeHolderLl.setLayoutParams(lp);
+                    isPlaceHolderChange = true;
+                    placeHolderLl.setTranslationY(0);
+                }
+            }
+
+            @Override
+            public void updateWeek2Month(float translationY) {
+                monthViewPager2.setTranslationY(translationY);
+                if (isPlaceHolderChange) {
+                    placeHolderLl.setTranslationY(translationY);
+                }
+                if (GlobalInstance.INSTANCE.isAbsoluteLess(translationY, displayTiming, 10) && !isWeekChanged) {
+                    weekViewPager2.setVisibility(View.GONE);
+                    isWeekChanged = true;
+                }
+                if (GlobalInstance.INSTANCE.isAbsoluteLess(monthHeight + translationY, itemHeight * 1f, 10) && !isPlaceHolderChange) {
+                    RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) placeHolderLl.getLayoutParams();
+                    lp.removeRule(RelativeLayout.BELOW);
+                    lp.addRule(RelativeLayout.BELOW, monthViewPager2.getId());
+                    placeHolderLl.setLayoutParams(lp);
+                    isPlaceHolderChange = true;
+                    placeHolderLl.setTranslationY(translationY);
+                }
+            }
+        });
         scrollView.setCallback(new Callback2Update() {
             @Override
             public void start2Week() {
-                if (Global.INSTANCE.isMonth()) {
-                    Global.INSTANCE.startAnimationForWeek(monthViewPager2, weekViewPager2, placeHolderLl);
+                if (GlobalInstance.INSTANCE.isMonth() && !GlobalInstance.INSTANCE.isAnimatorStarted()) {
+                    raw = new CalendarUtil().getRaw(GlobalInstance.INSTANCE.getSelectedYear(), GlobalInstance.INSTANCE.getSelectedMonth() - 1, GlobalInstance.INSTANCE.getSelectedDay());
+                    rawCount = new CalendarUtil().getAllRaws(GlobalInstance.INSTANCE.getSelectedYear(), GlobalInstance.INSTANCE.getSelectedMonth() - 1, GlobalInstance.INSTANCE.getSelectedDay());
+                    itemHeight = DisplayUtils.dip2px(monthViewPager2.getContext(), 300f) / rawCount;
+
+                    monthHeight = itemHeight * rawCount * 1f;
+                    displayTiming = -(raw - 1) * itemHeight;
+
+                    // 月切周，月数据已经确定，需要在开始动画前更新周的数据和视图
+                    adapterWeek.updateSelect();
+                    weekViewPager2.setCurrentItem(1, false);
+
+                    monthViewPager2.setVisibility(View.VISIBLE);
+                    isWeekChanged = false;
+                    isPlaceHolderChange = false;
+                    GlobalInstance.INSTANCE.startAnimationForWeek(0f, monthHeight, 500);
                 }
             }
 
             @Override
             public void start2Month() {
-                if (!Global.INSTANCE.isMonth()) {
-                    Global.INSTANCE.startAnimationForMonth(monthViewPager2, weekViewPager2, placeHolderLl);
+                if (!GlobalInstance.INSTANCE.isMonth() && !GlobalInstance.INSTANCE.isAnimatorStarted()) {
+                    raw = new CalendarUtil().getRaw(GlobalInstance.INSTANCE.getSelectedYear(), GlobalInstance.INSTANCE.getSelectedMonth() - 1, GlobalInstance.INSTANCE.getSelectedDay());
+                    rawCount = new CalendarUtil().getAllRaws(GlobalInstance.INSTANCE.getSelectedYear(), GlobalInstance.INSTANCE.getSelectedMonth() - 1, GlobalInstance.INSTANCE.getSelectedDay());
+                    itemHeight = DisplayUtils.dip2px(monthViewPager2.getContext(), 300f) / rawCount;
+
+                    monthHeight = itemHeight * rawCount;
+                    displayTiming = -(raw - 1) * itemHeight;
+
+                    // 周切月，周数据已经确定，需要在开始动画前更新月的数据和视图
+                    adapterMonth.updateSelect();
+                    monthViewPager2.setCurrentItem(1, false);
+                    monthViewPager2.setVisibility(View.VISIBLE);
+                    isWeekChanged = false;
+                    isPlaceHolderChange = false;
+                    GlobalInstance.INSTANCE.startAnimationForMonth(-DisplayUtils.dip2px(monthViewPager2.getContext(), 300f), monthHeight, 500);
                 }
             }
 
@@ -140,6 +221,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GlobalInstance.INSTANCE.release();
     }
 
     public interface Callback {

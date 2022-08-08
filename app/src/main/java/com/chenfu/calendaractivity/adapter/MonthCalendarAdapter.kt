@@ -5,9 +5,9 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.chenfu.calendaractivity.Global.selectedDay
-import com.chenfu.calendaractivity.Global.selectedMonth
-import com.chenfu.calendaractivity.Global.selectedYear
+import com.chenfu.calendaractivity.GlobalInstance.selectedDay
+import com.chenfu.calendaractivity.GlobalInstance.selectedMonth
+import com.chenfu.calendaractivity.GlobalInstance.selectedYear
 import com.chenfu.calendaractivity.MainActivity
 import com.chenfu.calendaractivity.R
 import com.chenfu.calendaractivity.util.CalendarUtil
