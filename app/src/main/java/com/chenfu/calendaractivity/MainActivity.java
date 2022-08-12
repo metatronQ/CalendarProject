@@ -9,9 +9,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.chenfu.calendaractivity.adapter.BaseAdapter;
+import com.chenfu.calendaractivity.adapter.ClipAdapter;
 import com.chenfu.calendaractivity.adapter.MonthCalendarAdapter;
 import com.chenfu.calendaractivity.adapter.WeekCalendarAdapter;
 import com.chenfu.calendaractivity.util.CalendarUtil;
@@ -157,6 +160,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        String data[] = {"1","2","3","4","5","6","7","8","9","10","11","12","13"};
+        ClipAdapter adapter = new ClipAdapter(this, data);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new MyItemDecoration(this, data));
     }
 
     public void bindAdapter(ViewPager2 viewPager2, BaseAdapter adapter) {

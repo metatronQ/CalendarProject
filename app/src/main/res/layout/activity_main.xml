@@ -26,15 +26,18 @@
                 android:text="点击占位"
                 android:textSize="100sp" />
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/purple_700"
-                android:gravity="center"
-                android:text="空占位"
-                android:textColor="@color/white"
-                android:textSize="100sp" />
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
         </LinearLayout>
 
         <androidx.viewpager2.widget.ViewPager2
